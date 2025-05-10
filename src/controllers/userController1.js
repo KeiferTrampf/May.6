@@ -1,9 +1,9 @@
 import handler from "../handlers/user.js";
-import jwt from "jsonwebtoken";
 
 const createUser = async (req, res) => {
   const { username, password } = req.body;
 
+  // Check if the username already exists
   const existingUser = await handler.findUserByUsername(username);
   if (existingUser) {
     return res
@@ -11,26 +11,23 @@ const createUser = async (req, res) => {
       .json({ ok: false, message: "Username already exists" });
   }
 
+  // Create the user if the username is unique
   await handler.createUser({ username, password });
   res.status(201).json({ ok: true });
 };
-
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
   const user = await handler.loginUser({ username, password });
 
   if (!user) {
-    res.status(401).json({ message: "invalid password" });
+    res.status(401);
+    res.json({ message: "invalid password" });
     return;
   }
 
-  const token = jwt.sign({ userId: user._id }, "your_secret_key", {
-    expiresIn: "1h",
-  });
-  // Use createJWT to generate the token
+  const token = createJWT(user);
   res.status(200).json({ token });
 };
-
 export default {
   createUser,
   loginUser,

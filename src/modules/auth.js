@@ -17,19 +17,19 @@ export const protect = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ message: "not a valid token" });
   }
-  try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = payload;
-    // console.log(payload);
-    next();
-  } catch (e) {
-    console.error(e);
-
-    res.status(401);
-    res.json({ message: "token malformed" });
-  }
-
+  // try {
+  //   const payload = jwt.verify(token, process.env.JWT_SECRET);
+  //   req.user = payload;
+  //   // console.log(payload);
   //   next();
+  // } catch (e) {
+  //   console.error(e);
+
+  //   res.status(401);
+  //   res.json({ message: "token malformed" });
+  // }
+
+  next();
 };
 
 export const hashPassword = (password) => {
